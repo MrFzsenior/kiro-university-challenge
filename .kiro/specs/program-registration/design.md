@@ -79,3 +79,24 @@ interface IRegistration {
 - Use `mongoose.startSession()` + `session.withTransaction()` in `register()` to avoid race conditions on `registeredCount`.
 - The `{ member, program }` unique index on `Registration` is the safety net against double registration.
 - `GamificationService.addPoints()` is called inside the same transaction as registration approval so points are never awarded for a failed save.
+
+---
+
+## Property-Based Tests
+
+The following invariants are extracted from the requirements and enforced with fast-check (see `src/domain/*.test.ts`). Pure domain logic lives in `src/domain/` so it can be tested without a database.
+
+### Capacity invariants (`capacity.ts`)
+
+- `registeredCount` never exceeds `capacity` after any registration.
+- Registration throws when a program is `cancelled`, `full`, or already at capacity.
+- Taking the last slot flips status to `full`.
+- Register then cancel is a round-trip: the count returns to its original value.
+- Filling an empty program stops exactly at capacity — never one more.
+
+### Leveling invariants (`leveling.ts`)
+
+- Every non-negative point total maps to a known level.
+- Leveling is monotonic: more points never lowers a member's level.
+- Point awards are additive and commutative — order does not change the final level.
+- Negative point deltas are rejected (points can't be silently removed).

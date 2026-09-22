@@ -3,6 +3,7 @@ import { Registration, IRegistration } from '../models/registration.model';
 import { Program } from '../models/program.model';
 import { createError } from '../middleware/error-handler';
 import { addPoints } from './gamification.service';
+import { canRegister, registerOne } from '../domain/capacity';
 
 /**
  * Register a member for a program.
@@ -23,11 +24,8 @@ export const register = async (
       const program = await Program.findById(programId).session(session);
       if (!program) throw createError('Program not found', 404);
 
-      if (!['upcoming', 'ongoing'].includes(program.status)) {
-        throw createError('Program is not open for registration', 400);
-      }
-      if (program.registeredCount >= program.capacity) {
-        throw createError('Program is at full capacity', 400);
+      if (!canRegister(program)) {
+        throw createError('Program is not open for registration or is full', 400);
       }
 
       // This will throw a duplicate key error (409) if already registered
@@ -35,10 +33,9 @@ export const register = async (
         session,
       });
 
-      program.registeredCount += 1;
-      if (program.registeredCount >= program.capacity) {
-        program.status = 'full';
-      }
+      const next = registerOne(program);
+      program.registeredCount = next.registeredCount;
+      program.status = next.status;
       await program.save({ session });
 
       registration = created;

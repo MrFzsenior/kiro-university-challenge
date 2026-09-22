@@ -1,22 +1,7 @@
 import { Member } from '../models/member.model';
 import { createError } from '../middleware/error-handler';
 import mongoose from 'mongoose';
-
-const LEVEL_THRESHOLDS = {
-  beginner: 0,
-  amateur: 100,
-  pro: 500,
-  master: 1500,
-} as const;
-
-type Level = keyof typeof LEVEL_THRESHOLDS;
-
-const calculateLevel = (points: number): Level => {
-  if (points >= LEVEL_THRESHOLDS.master) return 'master';
-  if (points >= LEVEL_THRESHOLDS.pro) return 'pro';
-  if (points >= LEVEL_THRESHOLDS.amateur) return 'amateur';
-  return 'beginner';
-};
+import { calculateLevel, applyPoints } from '../domain/leveling';
 
 /**
  * Add points to a member and recalculate their level.
@@ -30,7 +15,7 @@ export const addPoints = async (
   const member = await Member.findById(memberId).session(session ?? null);
   if (!member) throw createError('Member not found', 404);
 
-  member.points += points;
+  member.points = applyPoints(member.points, points);
   member.level = calculateLevel(member.points);
   await member.save({ session });
 
