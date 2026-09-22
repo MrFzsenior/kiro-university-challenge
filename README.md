@@ -43,8 +43,19 @@ src/
 └── index.ts         # Entry point
 .kiro/
 ├── steering/        # Persistent Kiro context
-└── specs/           # Feature specs
+├── specs/           # Feature specs
+└── hooks/           # Automated workflows (type-check, tests)
 ```
+
+## Automation Hooks
+
+Hooks in `.kiro/hooks/` run automatically on session events:
+
+| Hook | Trigger | Action |
+|------|---------|--------|
+| `type-check-on-save` | Any `.ts` file saved | `npx tsc --noEmit` |
+| `test-on-service-save` | A file in `src/services/` saved | `npm test` |
+| `test-after-task` | A spec task completes | `npm test` |
 
 ## API Endpoints
 

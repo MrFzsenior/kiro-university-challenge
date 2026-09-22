@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Run tests when a service changes",
+      "trigger": "PostFileSave",
+      "matcher": "src/services/.*\\.ts$",
+      "action": {
+        "type": "command",
+        "command": "npm test"
+      }
+    }
+  ]
+}

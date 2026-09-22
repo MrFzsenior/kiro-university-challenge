@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Type-check on TypeScript save",
+      "trigger": "PostFileSave",
+      "matcher": "\\.ts$",
+      "action": {
+        "type": "command",
+        "command": "npx tsc --noEmit"
+      }
+    }
+  ]
+}
