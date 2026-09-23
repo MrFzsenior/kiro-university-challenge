@@ -44,7 +44,9 @@ src/
 .kiro/
 ├── steering/        # Persistent Kiro context
 ├── specs/           # Feature specs
-└── hooks/           # Automated workflows (type-check, tests)
+├── hooks/           # Automated workflows (type-check, tests)
+├── settings/        # MCP server configuration
+└── powers/          # Packaged conventions, skills, and tools
 ```
 
 ## Automation Hooks
@@ -56,6 +58,32 @@ Hooks in `.kiro/hooks/` run automatically on session events:
 | `type-check-on-save` | Any `.ts` file saved | `npx tsc --noEmit` |
 | `test-on-service-save` | A file in `src/services/` saved | `npm test` |
 | `test-after-task` | A spec task completes | `npm test` |
+
+## MCP Servers
+
+Configured in `.kiro/settings/mcp.json`. Requires [`uv`](https://docs.astral.sh/uv/getting-started/installation/) for `uvx`.
+
+| Server | Command | Tools |
+|--------|---------|-------|
+| `fetch` | `uvx mcp-server-fetch` | `fetch` — retrieve content from a URL |
+
+The `fetch` server lets Kiro pull live documentation (e.g. Mongoose or Express docs) directly into context while working on the API.
+
+## Kiro Power: `api-conventions`
+
+Packaged in `.kiro/powers/api-conventions/`. Loads on demand when you mention keywords like *endpoint*, *controller*, *service*, or *model*. It bundles:
+
+- **Skill `add-endpoint`** — encodes the `route → controller → service → model` layering rule and a step-by-step checklist for adding endpoints consistently.
+- **MCP** — the `fetch` server, so the power brings its own tooling.
+
+```
+.kiro/powers/api-conventions/
+├── plugin.json              # Manifest
+├── mcp.json                 # Bundled MCP server
+└── skills/add-endpoint/
+    ├── SKILL.md
+    └── references/checklist.md
+```
 
 ## API Endpoints
 

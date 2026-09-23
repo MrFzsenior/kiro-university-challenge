@@ -1,0 +1,19 @@
+{
+  "name": "api-conventions",
+  "version": "1.0.0",
+  "description": "Packaged conventions, skills, and tooling for the Sports Club Management API. Loads on demand when working on endpoints, services, or MongoDB models.",
+  "keywords": [
+    "api",
+    "endpoint",
+    "route",
+    "controller",
+    "service",
+    "mongoose",
+    "model",
+    "sports club"
+  ],
+  "author": "Kiro University Challenge",
+  "license": "MIT",
+  "skills": ["skills/add-endpoint"],
+  "mcp": "mcp.json"
+}
